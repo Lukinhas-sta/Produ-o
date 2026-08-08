@@ -169,3 +169,15 @@ ATUALIZAÇÃO - ACESSO ADM POR ATALHO
   Ctrl + Shift + A
 - O atalho apenas abre admin.html.
 - O login e a senha continuam obrigatórios.
+
+
+ATUALIZAÇÃO - HISTÓRICO / PRODUÇÃO
+==================================
+- Nova aba "Histórico" no ADM.
+- Mostra as datas que já possuem produção salva.
+- Ao clicar em uma data, abre diretamente a produção daquele dia.
+- Armazenistas usam histórico diário.
+- Empilhadores usam referência semanal.
+- Campo de produção corrigido: agora aceita quantos dígitos forem necessários.
+- O número anterior é selecionado ao entrar no campo, mas depois você pode digitar normalmente 99, 999, 1500, 25000 etc.
+- "Novo dia" atualiza a data para o dia atual do computador e zera os campos antes de salvar.

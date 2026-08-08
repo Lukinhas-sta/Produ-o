@@ -2,7 +2,14 @@
  const cfg=window.APP_CONFIG,configured=Boolean(cfg.SUPABASE_URL&&cfg.SUPABASE_URL.startsWith('https://')&&cfg.SUPABASE_ANON_KEY&&cfg.SUPABASE_ANON_KEY.startsWith('sb_publishable_'));
  const supa=configured?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY):null;
  const $=id=>document.getElementById(id);
- const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+ const localToday=()=>{
+   const d=new Date();
+   const y=d.getFullYear();
+   const m=String(d.getMonth()+1).padStart(2,'0');
+   const day=String(d.getDate()).padStart(2,'0');
+   return `${y}-${m}-${day}`;
+ };
+ const today=()=>localToday();
  const isoWeekValue=()=>{
    const d=new Date();
    const date=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
@@ -28,7 +35,7 @@
  $('dateArmazenistasInput').value=today();$('dateEmpilhadoresInput').value=isoWeekValue();
 
  function setAuth(on){$('loginPanel').classList.toggle('hidden',on);$('adminContent').classList.toggle('hidden',!on);$('logoutBtn').classList.toggle('hidden',!on)}
- document.querySelectorAll('.admin-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(x=>x.classList.add('hidden'));b.classList.add('active');$(`panel-${b.dataset.tab}`).classList.remove('hidden')});
+ document.querySelectorAll('.admin-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(x=>x.classList.add('hidden'));b.classList.add('active');$(`panel-${b.dataset.tab}`).classList.remove('hidden');if(b.dataset.tab==='historico')loadHistory()});
  $('loginForm').onsubmit=async e=>{e.preventDefault();if(!configured){$('loginMessage').textContent='Configure js/config.js primeiro.';return}const{error}=await supa.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error){$('loginMessage').textContent=error.message;return}setAuth(true);initialLoad()};
  $('logoutBtn').onclick=async()=>{await supa.auth.signOut();setAuth(false)};
 
@@ -97,12 +104,6 @@
    (employees||[]).filter(e=>e.active).forEach((e,i)=>{const card=document.createElement('label');card.className='employee-card';card.dataset.id=e.id;card.innerHTML=`<span class="num">${String(i+1).padStart(2,'0')}</span><span class="emp-name"><strong>${esc(e.name)}</strong><small>${category==='armazenistas'?'Caixas produzidas':'Movimentações realizadas'}</small></span><input type="number" min="0" step="1" value="${Number(map.get(e.id)||0)}">`;
       const qtyInput=card.querySelector('input');
       qtyInput.addEventListener('focus',()=>qtyInput.select());
-      qtyInput.addEventListener('click',()=>qtyInput.select());
-      qtyInput.addEventListener('keydown',e=>{
-        if((e.key>='0'&&e.key<='9') && qtyInput.selectionStart===qtyInput.selectionEnd){
-          qtyInput.select();
-        }
-      });
       grid.appendChild(card)});
    const teamMembers=$(`teamMembers${cap}`);
    if(teamMembers){
@@ -152,7 +153,12 @@
  async function copyYesterday(category){
    const cap=category==='armazenistas'?'Armazenistas':'Empilhadores',rawDate=$(`date${cap}Input`).value,date=category==='empilhadores'?weekToMonday(rawDate):rawDate;const{data}=await supa.from('production').select('production_date').eq('category',category).lt('production_date',date).order('production_date',{ascending:false}).limit(1);if(!data?.[0])return alert('Não encontrei produção anterior.');const prev=data[0].production_date;const{data:rows}=await supa.from('production').select('employee_id,quantity').eq('category',category).eq('production_date',prev);const map=new Map((rows||[]).map(r=>[r.employee_id,r.quantity]));[...$(`grid${cap}`).querySelectorAll('.employee-card')].forEach(c=>c.querySelector('input').value=map.get(Number(c.dataset.id))||0)
  }
- function newDay(category){const cap=category==='armazenistas'?'Armazenistas':'Empilhadores';$(`date${cap}Input`).value=category==='empilhadores'?isoWeekValue():today();[...$(`grid${cap}`).querySelectorAll('.employee-card')].forEach(c=>c.querySelector('input').value=0);$(`status${cap}`).textContent='Novo dia preparado (ainda não salvo)'}
+ function newDay(category){
+   const cap=category==='armazenistas'?'Armazenistas':'Empilhadores';
+   $(`date${cap}Input`).value=category==='empilhadores'?isoWeekValue():localToday();
+   [...$(`grid${cap}`).querySelectorAll('.employee-card')].forEach(c=>c.querySelector('input').value=0);
+   $(`status${cap}`).textContent='Novo dia preparado (ainda não salvo)';
+ }Input`).value=category==='empilhadores'?isoWeekValue():today();[...$(`grid${cap}`).querySelectorAll('.employee-card')].forEach(c=>c.querySelector('input').value=0);$(`status${cap}`).textContent='Novo dia preparado (ainda não salvo)'}
  document.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>loadProduction(b.dataset.load));
  document.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>saveProduction(b.dataset.save));
  document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyYesterday(b.dataset.copy));
@@ -283,6 +289,87 @@
  document.querySelectorAll('[data-add-employee]').forEach(btn=>{
    btn.onclick=()=>addEmployee(btn.dataset.addEmployee);
  });
+
+
+ async function loadHistory(){
+   const category=$('historyCategory').value;
+   const status=$('historyStatus');
+   const host=$('historyDays');
+
+   status.textContent='Carregando...';
+   host.innerHTML='';
+
+   const {data,error}=await supa
+     .from('production')
+     .select('production_date')
+     .eq('category',category)
+     .order('production_date',{ascending:false});
+
+   if(error){
+     status.textContent='Erro ao carregar';
+     host.innerHTML=`<div class="empty-history">Não foi possível carregar o histórico.</div>`;
+     return;
+   }
+
+   const uniqueDates=[...new Set((data||[]).map(r=>r.production_date))];
+
+   if(!uniqueDates.length){
+     status.textContent='Sem histórico';
+     host.innerHTML=`<div class="empty-history">Ainda não existem produções salvas.</div>`;
+     return;
+   }
+
+   host.innerHTML=uniqueDates.map(date=>{
+     const [y,m,d]=date.split('-');
+     const label=category==='empilhadores'
+       ? `Semana iniciada em ${d}/${m}/${y}`
+       : `${d}/${m}/${y}`;
+
+     return `<button class="history-day-card" data-history-date="${date}" data-history-category="${category}">
+       <div>
+         <strong>${label}</strong>
+         <small>Clique para abrir essa produção</small>
+       </div>
+       <span>→</span>
+     </button>`;
+   }).join('');
+
+   host.querySelectorAll('[data-history-date]').forEach(btn=>btn.onclick=async()=>{
+     const targetCategory=btn.dataset.historyCategory;
+     const date=btn.dataset.historyDate;
+     const cap=targetCategory==='armazenistas'?'Armazenistas':'Empilhadores';
+
+     // Vai para a aba correspondente
+     document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
+     document.querySelectorAll('.tab-panel').forEach(x=>x.classList.add('hidden'));
+
+     const tab=document.querySelector(`.admin-tab[data-tab="${targetCategory}"]`);
+     if(tab) tab.classList.add('active');
+     const panel=$(`panel-${targetCategory}`);
+     if(panel) panel.classList.remove('hidden');
+
+     if(targetCategory==='armazenistas'){
+       $(`date${cap}Input`).value=date;
+       await loadProduction(targetCategory,date);
+     }else{
+       // Converte a segunda-feira salva para input type=week
+       const dte=new Date(date+'T12:00:00');
+       const tmp=new Date(Date.UTC(dte.getFullYear(),dte.getMonth(),dte.getDate()));
+       const dayNum=tmp.getUTCDay()||7;
+       tmp.setUTCDate(tmp.getUTCDate()+4-dayNum);
+       const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
+       const weekNo=Math.ceil((((tmp-yearStart)/86400000)+1)/7);
+       $(`date${cap}Input`).value=`${tmp.getUTCFullYear()}-W${String(weekNo).padStart(2,'0')}`;
+       await loadProduction(targetCategory,$(`date${cap}Input`).value);
+     }
+   });
+
+   status.textContent=`${uniqueDates.length} registro(s)`;
+ }
+
+ $('refreshHistoryBtn').onclick=loadHistory;
+ $('historyCategory').onchange=loadHistory;
+
 
  async function initialLoad(){await Promise.all([loadNotices(),loadProduction('armazenistas'),loadProduction('empilhadores'),loadPages(),loadSettings()])}
  (async()=>{if(!configured){setAuth(false);$('loginMessage').textContent='Falha ao carregar a configuração do banco. Atualize a página.';return}const{data:{session}}=await supa.auth.getSession();if(session){setAuth(true);initialLoad()}else setAuth(false)})()

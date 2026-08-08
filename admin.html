@@ -34,6 +34,7 @@
       <button class="admin-tab active" data-tab="avisos">Avisos</button>
       <button class="admin-tab" data-tab="armazenistas">Armazenistas</button>
       <button class="admin-tab" data-tab="empilhadores">Empilhadores</button>
+      <button class="admin-tab" data-tab="historico">Histórico</button>
       <button class="admin-tab" data-tab="paginas">Páginas extras</button>
       <button class="admin-tab" data-tab="contas">Contas</button>
       <button class="admin-tab" data-tab="painel">Configurações</button>
@@ -140,6 +141,31 @@
       <div class="admin-card blue-admin-card">
         <div class="section-heading"><div><span class="eyebrow blue">PRODUÇÃO</span><h2>Empilhadores</h2></div><span class="save-status" id="statusEmpilhadores">Pronto</span></div>
         <div class="employee-grid" id="gridEmpilhadores"></div>
+      </div>
+    </section>
+
+
+    <section class="tab-panel hidden" id="panel-historico">
+      <div class="admin-card">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">PRODUÇÃO SALVA</span>
+            <h2>Histórico de dias</h2>
+          </div>
+          <span class="save-status" id="historyStatus">Selecione um dia</span>
+        </div>
+
+        <div class="history-toolbar">
+          <label>Equipe
+            <select id="historyCategory">
+              <option value="armazenistas">Armazenistas</option>
+              <option value="empilhadores">Empilhadores</option>
+            </select>
+          </label>
+          <button class="btn btn-secondary" id="refreshHistoryBtn">Atualizar histórico</button>
+        </div>
+
+        <div id="historyDays" class="history-days"></div>
       </div>
     </section>
 

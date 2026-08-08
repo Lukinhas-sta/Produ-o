@@ -614,3 +614,75 @@
 
 @media(max-width:900px){
 }
+
+
+/* ===== Histórico de produção ===== */
+.history-toolbar{
+  display:flex;
+  align-items:end;
+  gap:10px;
+  margin-bottom:14px;
+}
+.history-toolbar label{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  min-width:230px;
+  color:#bac9bf;
+  font-size:.82rem;
+  font-weight:700;
+}
+.history-days{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.history-day-card{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:13px 14px;
+  border:1px solid #274032;
+  border-radius:12px;
+  background:linear-gradient(135deg,#0d1b13,#0a130e);
+  color:#eef6f0;
+  text-align:left;
+  cursor:pointer;
+  transition:.2s ease;
+}
+.history-day-card:hover{
+  transform:translateY(-1px);
+  border-color:#3c8c49;
+  background:linear-gradient(135deg,#10291a,#0b1710);
+}
+.history-day-card strong{
+  display:block;
+  font-size:1rem;
+}
+.history-day-card small{
+  display:block;
+  margin-top:4px;
+  color:#789081;
+  font-size:.72rem;
+}
+.history-day-card>span{
+  color:#63e36d;
+  font-size:1.25rem;
+  font-weight:900;
+}
+.empty-history{
+  grid-column:1/-1;
+  padding:25px;
+  text-align:center;
+  color:#819487;
+  border:1px dashed #2a3e31;
+  border-radius:12px;
+}
+
+@media(max-width:750px){
+  .history-days{grid-template-columns:1fr}
+  .history-toolbar{align-items:stretch;flex-direction:column}
+  .history-toolbar label{min-width:0}
+}
