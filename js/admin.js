@@ -426,41 +426,35 @@
      </button>`;
    }).join('');
 
-   host.querySelectorAll('[data-history-date]').forEach(btn=>btn.onclick=async()=>{
+   host.querySelectorAll('[data-history-date]').forEach(btn=>btn.onclick=()=>{
      const targetCategory=btn.dataset.historyCategory;
      const date=btn.dataset.historyDate;
-     const cap=targetCategory==='armazenistas'?'Armazenistas':'Empilhadores';
+     const [y,m,d]=date.split('-');
+     const categoryLabel=targetCategory==='armazenistas'?'Armazenistas':'Empilhadores';
+     const preview=$('historyPreviewWrap');
+     const frame=$('historyTvFrame');
 
-     // Vai para a aba correspondente
-     document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));
-     document.querySelectorAll('.tab-panel').forEach(x=>x.classList.add('hidden'));
-
-     const tab=document.querySelector(`.admin-tab[data-tab="${targetCategory}"]`);
-     if(tab) tab.classList.add('active');
-     const panel=$(`panel-${targetCategory}`);
-     if(panel) panel.classList.remove('hidden');
-
-     if(targetCategory==='armazenistas'){
-       $(`date${cap}Input`).value=date;
-       await loadProduction(targetCategory,date);
-     }else{
-       // Converte a segunda-feira salva para input type=week
-       const dte=new Date(date+'T12:00:00');
-       const tmp=new Date(Date.UTC(dte.getFullYear(),dte.getMonth(),dte.getDate()));
-       const dayNum=tmp.getUTCDay()||7;
-       tmp.setUTCDate(tmp.getUTCDate()+4-dayNum);
-       const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
-       const weekNo=Math.ceil((((tmp-yearStart)/86400000)+1)/7);
-       $(`date${cap}Input`).value=`${tmp.getUTCFullYear()}-W${String(weekNo).padStart(2,'0')}`;
-       await loadProduction(targetCategory,$(`date${cap}Input`).value);
-     }
+     $('historyPreviewTitle').textContent=`${categoryLabel} • ${d}/${m}/${y}`;
+     frame.src=`index.html?historyMode=1&historyCategory=${encodeURIComponent(targetCategory)}&historyDate=${encodeURIComponent(date)}`;
+     preview.classList.remove('hidden');
+     preview.scrollIntoView({behavior:'smooth',block:'start'});
+     status.textContent=`Visualizando ${d}/${m}/${y}`;
    });
 
    status.textContent=`${uniqueDates.length} registro(s)`;
  }
 
+ $('closeHistoryPreviewBtn').onclick=()=>{
+   $('historyPreviewWrap').classList.add('hidden');
+   $('historyTvFrame').src='about:blank';
+   $('historyStatus').textContent='Selecione um dia';
+ };
  $('refreshHistoryBtn').onclick=loadHistory;
- $('historyCategory').onchange=loadHistory;
+ $('historyCategory').onchange=()=>{
+   $('historyPreviewWrap').classList.add('hidden');
+   $('historyTvFrame').src='about:blank';
+   loadHistory();
+ };
 
 
  async function initialLoad(){await Promise.all([loadNotices(),loadProduction('armazenistas'),loadProduction('empilhadores'),loadPages(),loadSettings()])}

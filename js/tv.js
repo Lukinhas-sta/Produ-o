@@ -3,6 +3,10 @@
   const configured=Boolean(cfg.SUPABASE_URL && cfg.SUPABASE_URL.startsWith('https://') && cfg.SUPABASE_ANON_KEY && cfg.SUPABASE_ANON_KEY.startsWith('sb_publishable_'));
   const supa=configured?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY):null;
   const $=id=>document.getElementById(id);
+  const historyParams=new URLSearchParams(window.location.search);
+  const historyMode=historyParams.get('historyMode')==='1';
+  const historyCategory=historyParams.get('historyCategory');
+  const historyDate=historyParams.get('historyDate');
 
   // Atalho secreto para abrir a área administrativa:
   // Ctrl + Shift + A
@@ -71,7 +75,7 @@
     if(!supa)return;
     const cap=category==='armazenistas'?'Armazenistas':'Empilhadores';
     const isArm=category==='armazenistas';
-    const date=await latestDate(category);
+    const date=(historyMode && historyCategory===category && historyDate) ? historyDate : await latestDate(category);
     const prev=await previousDate(category,date);
     const [{data:goalRow},{data:rows},{data:prevRows}]=await Promise.all([
       supa.from('settings').select('value').eq('key',`goal_${category}`).maybeSingle(),
@@ -84,7 +88,7 @@
     const total=sorted.reduce((s,r)=>s+Number(r.quantity||0),0);
     const hit=sorted.filter(r=>Number(r.quantity)>=goal).length;
     const max=Math.max(goal,...sorted.map(r=>Number(r.quantity||0)),1);
-    $(`date${cap}`).textContent=isArm?brDate(date):'';$(`goal${cap}`).textContent=goal.toLocaleString('pt-BR');$(`total${cap}`).textContent=total.toLocaleString('pt-BR');$(`hit${cap}`).textContent=hit;
+    $(`date${cap}`).textContent=(isArm||historyMode)?brDate(date):'';$(`goal${cap}`).textContent=goal.toLocaleString('pt-BR');$(`total${cap}`).textContent=total.toLocaleString('pt-BR');$(`hit${cap}`).textContent=hit;
     const last=sorted.reduce((a,r)=>!r.updated_at?a:(!a||r.updated_at>a?r.updated_at:a),null);$(`updated${cap}`).textContent=fmtTime(last);
     const unit=isArm?'Cxs':'Mov.';
     const list=$(`ranking${cap}`);
@@ -138,7 +142,7 @@
     $('bestEmpName').textContent=bestE?.employee_name||'—';$('bestEmpValue').textContent=`${Number(bestE?.quantity||0).toLocaleString('pt-BR')} Mov.`;
     const comp=(best,map)=>{if(!best)return'Sem dados';const prev=map.get(best.employee_id);if(prev===undefined||prev===0)return'Sem comparação anterior';const d=((Number(best.quantity)-prev)/prev)*100;return `${d>=0?'▲':'▼'} ${Math.abs(d).toLocaleString('pt-BR',{maximumFractionDigits:0})}% vs último dia`};
     $('bestArmCompare').textContent=comp(bestA,a.prevMap);$('bestEmpCompare').textContent=comp(bestE,e.prevMap);
-    $('summaryTotal').textContent=(a.total+e.total).toLocaleString('pt-BR');$('summaryHits').textContent=a.hit+e.hit
+    $('summaryTotal').textContent=a.total.toLocaleString('pt-BR');$('summaryHits').textContent=e.total.toLocaleString('pt-BR')
   }
 
   async function loadExtraPages(){
@@ -178,13 +182,21 @@
     if(!supa)return;
     try{
       await settings();
-      await Promise.all([loadNotices(),loadRanking('armazenistas'),loadRanking('empilhadores'),loadExtraPages()]);
-      setConnection(true);
-      if(presentationPaused){
+      if(historyMode && ['armazenistas','empilhadores'].includes(historyCategory) && historyDate){
+        await loadRanking(historyCategory);
         rebuildSlides();
-        const idx=slides.findIndex(s=>s.dataset.key===forcedSlide);
-        if(idx>=0 && currentIndex!==idx) activateSlide(idx);
+        const idx=slides.findIndex(s=>s.dataset.key===historyCategory);
+        if(idx>=0) activateSlide(idx);
+        document.body.classList.add('history-tv-mode');
+      }else{
+        await Promise.all([loadNotices(),loadRanking('armazenistas'),loadRanking('empilhadores'),loadExtraPages()]);
+        if(presentationPaused){
+          rebuildSlides();
+          const idx=slides.findIndex(s=>s.dataset.key===forcedSlide);
+          if(idx>=0 && currentIndex!==idx) activateSlide(idx);
+        }
       }
+      setConnection(true);
     }catch(e){
       console.error(e);
       setConnection(false);
@@ -194,16 +206,19 @@
   rebuildSlides();
   if(configured){
     loadAll();
-    supa.channel('tv-live')
-      .on('postgres_changes',{event:'*',schema:'public',table:'production'},loadAll)
-      .on('postgres_changes',{event:'*',schema:'public',table:'settings'},loadAll)
-      .on('postgres_changes',{event:'*',schema:'public',table:'notices'},loadAll)
-      .on('postgres_changes',{event:'*',schema:'public',table:'extra_pages'},loadAll)
-      .subscribe();
-    setInterval(loadAll,Number(cfg.REFRESH_SECONDS||5)*1000)
+    if(!historyMode){
+      supa.channel('tv-live')
+        .on('postgres_changes',{event:'*',schema:'public',table:'production'},loadAll)
+        .on('postgres_changes',{event:'*',schema:'public',table:'settings'},loadAll)
+        .on('postgres_changes',{event:'*',schema:'public',table:'notices'},loadAll)
+        .on('postgres_changes',{event:'*',schema:'public',table:'extra_pages'},loadAll)
+        .subscribe();
+      setInterval(loadAll,Number(cfg.REFRESH_SECONDS||5)*1000)
+    }
   }else{setConnection(false);$('noticeTitle').textContent='Falha na conexão';$('noticeMessage').textContent='Não foi possível iniciar a conexão com o banco. Atualize a página ou verifique a internet.'}
 
   setInterval(()=>{
+    if(historyMode) return;
     if(presentationPaused){
       tick=0;
       updateProgress();
