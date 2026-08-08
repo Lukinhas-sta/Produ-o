@@ -686,3 +686,46 @@
   .history-toolbar{align-items:stretch;flex-direction:column}
   .history-toolbar label{min-width:0}
 }
+
+/* Login: mensagens bem visíveis */
+.form-message{
+  min-height:22px;
+  margin:2px 0 0;
+  padding:0;
+  font-size:.82rem;
+  font-weight:700;
+}
+.error-message{
+  color:#ff938c !important;
+  background:rgba(120,28,23,.18);
+  border:1px solid rgba(255,89,78,.22);
+  border-radius:9px;
+  padding:9px 10px;
+}
+.success-message{
+  color:#83ee8d !important;
+  background:rgba(37,139,49,.14);
+  border:1px solid rgba(82,224,94,.2);
+  border-radius:9px;
+  padding:9px 10px;
+}
+.login-form button:disabled{opacity:.7;cursor:wait}
+
+
+/* Login v2 */
+#loginMessage:not(:empty){
+  display:block;
+  width:100%;
+  margin-top:4px;
+}
+#loginMessage.error-message{
+  color:#ffd0cc !important;
+  background:#5b1e1a !important;
+  border:1px solid #a63a32 !important;
+  box-shadow:0 0 0 3px rgba(255,80,70,.08);
+}
+#loginMessage.success-message{
+  color:#d9ffe0 !important;
+  background:#153d1c !important;
+  border:1px solid #2f8d3d !important;
+}

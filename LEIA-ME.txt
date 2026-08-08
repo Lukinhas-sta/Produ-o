@@ -181,3 +181,19 @@ ATUALIZAÇÃO - HISTÓRICO / PRODUÇÃO
 - Campo de produção corrigido: agora aceita quantos dígitos forem necessários.
 - O número anterior é selecionado ao entrar no campo, mas depois você pode digitar normalmente 99, 999, 1500, 25000 etc.
 - "Novo dia" atualiza a data para o dia atual do computador e zera os campos antes de salvar.
+
+
+CORREÇÃO DE LOGIN
+=================
+- E-mail é normalizado automaticamente.
+- Erros de senha, e-mail não confirmado e conexão aparecem em português.
+- Botão mostra "Entrando..." durante a autenticação.
+- Nenhuma outra função foi alterada.
+
+
+CORREÇÃO LOGIN V2
+=================
+- Corrigido erro de JavaScript que impedia o painel ADM de abrir.
+- Senha/e-mail errados agora mostram "E-mail ou senha incorretos".
+- Login correto valida a sessão e abre imediatamente o conteúdo do ADM.
+- Se alguma consulta de dados falhar depois do login, o painel continua aberto para mostrar o erro correto.

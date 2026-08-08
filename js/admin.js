@@ -34,9 +34,101 @@
  let editingNoticeId=null;
  $('dateArmazenistasInput').value=today();$('dateEmpilhadoresInput').value=isoWeekValue();
 
- function setAuth(on){$('loginPanel').classList.toggle('hidden',on);$('adminContent').classList.toggle('hidden',!on);$('logoutBtn').classList.toggle('hidden',!on)}
+ function setAuth(on){
+   $('loginPanel').classList.toggle('hidden',on);
+   $('adminContent').classList.toggle('hidden',!on);
+   $('logoutBtn').classList.toggle('hidden',!on);
+   if(on){
+     window.scrollTo({top:0,behavior:'instant'});
+   }
+ }
  document.querySelectorAll('.admin-tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.admin-tab').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(x=>x.classList.add('hidden'));b.classList.add('active');$(`panel-${b.dataset.tab}`).classList.remove('hidden');if(b.dataset.tab==='historico')loadHistory()});
- $('loginForm').onsubmit=async e=>{e.preventDefault();if(!configured){$('loginMessage').textContent='Configure js/config.js primeiro.';return}const{error}=await supa.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error){$('loginMessage').textContent=error.message;return}setAuth(true);initialLoad()};
+ $('loginForm').onsubmit=async e=>{
+   e.preventDefault();
+
+   const form=$('loginForm');
+   const msg=$('loginMessage');
+   const btn=form.querySelector('button[type="submit"]');
+   const email=String($('email').value||'').trim().toLowerCase();
+   const password=String($('password').value||'');
+
+   msg.className='form-message';
+   msg.textContent='';
+
+   if(!configured || !supa){
+     msg.className='form-message error-message';
+     msg.textContent='Não foi possível carregar a conexão com o banco. Atualize a página.';
+     return;
+   }
+
+   if(!email || !password){
+     msg.className='form-message error-message';
+     msg.textContent='Preencha o e-mail e a senha.';
+     return;
+   }
+
+   try{
+     btn.disabled=true;
+     btn.textContent='Entrando...';
+
+     const {data,error}=await supa.auth.signInWithPassword({
+       email,
+       password
+     });
+
+     if(error){
+       const raw=String(error.message||'').toLowerCase();
+       msg.className='form-message error-message';
+
+       if(raw.includes('invalid login credentials')){
+         msg.textContent='E-mail ou senha incorretos.';
+       }else if(raw.includes('email not confirmed')){
+         msg.textContent='Seu e-mail ainda não foi confirmado no Supabase.';
+       }else if(raw.includes('user not found')){
+         msg.textContent='Essa conta não foi encontrada.';
+       }else{
+         msg.textContent='Não foi possível entrar: '+error.message;
+       }
+       return;
+     }
+
+     if(!data?.session || !data?.user){
+       msg.className='form-message error-message';
+       msg.textContent='O login foi aceito, mas a sessão não foi criada. Atualize a página e tente novamente.';
+       return;
+     }
+
+     // Confirma a sessão salva antes de abrir o painel.
+     const {data:sessionCheck,error:sessionError}=await supa.auth.getSession();
+     if(sessionError || !sessionCheck?.session){
+       msg.className='form-message error-message';
+       msg.textContent='Não foi possível manter a sessão do login. Tente novamente.';
+       return;
+     }
+
+     msg.className='form-message success-message';
+     msg.textContent='Login realizado. Abrindo painel...';
+
+     setAuth(true);
+
+     try{
+       await initialLoad();
+     }catch(loadError){
+       console.error('Erro ao carregar dados do ADM:',loadError);
+       // Mesmo se algum dado falhar, mantém o painel aberto.
+     }
+
+     // Garante que o usuário veja imediatamente o painel administrativo.
+     $('adminContent').scrollIntoView({block:'start'});
+   }catch(err){
+     console.error('Erro inesperado no login:',err);
+     msg.className='form-message error-message';
+     msg.textContent='Erro ao entrar. Verifique a internet e tente novamente.';
+   }finally{
+     btn.disabled=false;
+     btn.textContent='Entrar';
+   }
+ };
  $('logoutBtn').onclick=async()=>{await supa.auth.signOut();setAuth(false)};
 
  async function uploadImage(file,prefix){
@@ -158,7 +250,7 @@
    $(`date${cap}Input`).value=category==='empilhadores'?isoWeekValue():localToday();
    [...$(`grid${cap}`).querySelectorAll('.employee-card')].forEach(c=>c.querySelector('input').value=0);
    $(`status${cap}`).textContent='Novo dia preparado (ainda não salvo)';
- }Input`).value=category==='empilhadores'?isoWeekValue():today();[...$(`grid${cap}`).querySelectorAll('.employee-card')].forEach(c=>c.querySelector('input').value=0);$(`status${cap}`).textContent='Novo dia preparado (ainda não salvo)'}
+ }
  document.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>loadProduction(b.dataset.load));
  document.querySelectorAll('[data-save]').forEach(b=>b.onclick=()=>saveProduction(b.dataset.save));
  document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=()=>copyYesterday(b.dataset.copy));
@@ -372,5 +464,37 @@
 
 
  async function initialLoad(){await Promise.all([loadNotices(),loadProduction('armazenistas'),loadProduction('empilhadores'),loadPages(),loadSettings()])}
- (async()=>{if(!configured){setAuth(false);$('loginMessage').textContent='Falha ao carregar a configuração do banco. Atualize a página.';return}const{data:{session}}=await supa.auth.getSession();if(session){setAuth(true);initialLoad()}else setAuth(false)})()
+ (async()=>{
+   if(!configured || !supa){
+     setAuth(false);
+     $('loginMessage').className='form-message error-message';
+     $('loginMessage').textContent='Falha ao carregar a configuração do banco. Atualize a página.';
+     return;
+   }
+
+   try{
+     const {data:{session},error}=await supa.auth.getSession();
+
+     if(error){
+       setAuth(false);
+       $('loginMessage').className='form-message error-message';
+       $('loginMessage').textContent='Não foi possível verificar sua sessão.';
+       return;
+     }
+
+     if(session){
+       setAuth(true);
+       try{
+         await initialLoad();
+       }catch(e){
+         console.error('Erro ao carregar o painel:',e);
+       }
+     }else{
+       setAuth(false);
+     }
+   }catch(e){
+     console.error('Erro ao restaurar sessão:',e);
+     setAuth(false);
+   }
+ })()
 })();

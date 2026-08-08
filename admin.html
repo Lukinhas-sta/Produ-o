@@ -22,8 +22,8 @@
   <section class="login-panel" id="loginPanel">
     <div><span class="eyebrow">ACESSO RESTRITO</span><h2>Entrar como administrador</h2><p>Esta versão foi preparada para uso com uma única conta de ADM.</p></div>
     <form id="loginForm" class="login-form">
-      <label>E-mail<input type="email" id="email" required></label>
-      <label>Senha<input type="password" id="password" required></label>
+      <label>E-mail<input type="email" id="email" required autocomplete="username" placeholder="seuemail@exemplo.com"></label>
+      <label>Senha<input type="password" id="password" required autocomplete="current-password" placeholder="Sua senha"></label>
       <button class="btn btn-primary" type="submit">Entrar</button>
       <p id="loginMessage" class="form-message"></p>
     </form>
