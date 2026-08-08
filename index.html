@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Painel CD T3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="tv-page">
+<main class="tv-app" id="tvApp">
+  <div class="tv-statusbar">
+    <div class="status-left">
+      <span class="connection-pill" id="connectionPill"><i></i><b id="connectionText">Conectando...</b></span>
+      <span class="shift-pill" id="shiftLabel">3º Turno</span>
+    </div>
+    <div class="status-right">
+      <span id="syncLabel">Última sincronização: --:--</span>
+      <span class="paused-pill hidden" id="pausedPill">APRESENTAÇÃO PAUSADA</span>
+    </div>
+  </div>
+
+  <section class="tv-slide active" id="slide-aviso" data-kind="fixed" data-key="aviso">
+    <header class="slide-top green-header">
+      <div><span class="eyebrow dark">COMUNICAÇÃO DO TURNO</span><h1>AVISOS CD T3</h1></div>
+      <div class="top-clock"><strong id="clockAviso">--:--</strong><span id="dateAviso">--/--/----</span></div>
+    </header>
+    <div class="notice-stage">
+      <div class="notice-media" id="noticeMediaWrap"><img id="noticeImage" alt="" class="hidden"></div>
+      <div class="notice-copy">
+        <div class="notice-badge" id="noticeType">AVISO</div>
+        <h2 id="noticeTitle">Bem-vindos ao turno!</h2>
+        <p id="noticeMessage">Os avisos cadastrados pelo ADM aparecem aqui automaticamente.</p>
+        <div class="notice-footer"><span id="noticeAuthor">CD T3</span><span>•</span><span id="noticeUpdated">Atualização automática</span></div>
+      </div>
+    </div>
+    <footer class="slide-footer">
+      <div class="brand-circle">selene</div><span>Avisos</span>
+      <a class="infotech-signature" href="https://infotech-io.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Abrir site da InfoTech.io">
+          <span class="infotech-logo">InfoTech.io</span>
+          <small>Sistema desenvolvido pela InfoTech.io 🚀</small>
+        </a>
+        <div class="slide-progress"><i class="progress-bar"></i></div>
+      <span class="slide-counter">1/4</span>
+    </footer>
+  </section>
+
+  <section class="tv-slide" id="slide-armazenistas" data-kind="fixed" data-key="armazenistas">
+    <header class="slide-top green-header">
+      <div><span class="eyebrow dark">PRODUÇÃO DO DIA</span><h1>RANKING ARMAZENISTAS <em>(Diário)</em></h1></div>
+      <div class="date-box" id="dateArmazenistas">--/--</div>
+    </header>
+    <section class="production-hero">
+      <div class="production-photo green-photo" id="photoArmazenistas"><div class="photo-overlay"><span>PRODUÇÃO</span><strong>Armazenistas</strong></div></div>
+      <div class="kpi-stack">
+        <article class="kpi accent"><span>Meta diária</span><strong id="goalArmazenistas">0</strong><small>Caixas / dia</small></article>
+        <article class="kpi"><span>Total produzido</span><strong id="totalArmazenistas">0</strong><small>Caixas</small></article>
+        <article class="kpi"><span>Meta atingida</span><strong id="hitArmazenistas">0</strong><small>Colaboradores</small></article>
+        <article class="kpi"><span>Atualização</span><strong class="small-value" id="updatedArmazenistas">--:--</strong><small>Tempo real</small></article>
+      </div>
+    </section>
+    <section class="ranking-card">
+      <div class="ranking-head">
+        <div><span class="eyebrow">CLASSIFICAÇÃO</span><h2>Armazenistas</h2></div>
+        <div class="live-pill"><span></span> AO VIVO</div>
+      </div>
+      <div class="ranking-list" id="rankingArmazenistas"></div>
+    </section>
+    <footer class="slide-footer">
+      <div class="brand-circle">selene</div><span>Produção dos Armazenistas</span>
+      <a class="infotech-signature" href="https://infotech-io.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Abrir site da InfoTech.io">
+          <span class="infotech-logo">InfoTech.io</span>
+          <small>Sistema desenvolvido pela InfoTech.io 🚀</small>
+        </a>
+        <div class="slide-progress"><i class="progress-bar"></i></div>
+      <span class="slide-counter">2/4</span>
+    </footer>
+  </section>
+
+  <section class="tv-slide" id="slide-empilhadores" data-kind="fixed" data-key="empilhadores">
+    <header class="slide-top blue-header">
+      <div><span class="eyebrow dark">MOVIMENTAÇÃO DA SEMANA</span><h1>RANKING EMPILHADORES <em>(Semanal)</em></h1></div>
+      <div class="date-box" id="dateEmpilhadores">--/--</div>
+    </header>
+    <section class="production-hero">
+      <div class="production-photo blue-photo" id="photoEmpilhadores"><div class="photo-overlay"><span>OPERAÇÃO</span><strong>Empilhadores</strong></div></div>
+      <div class="kpi-stack">
+        <article class="kpi accent-blue"><span>Meta diária</span><strong id="goalEmpilhadores">0</strong><small>Movimentações / semana</small></article>
+        <article class="kpi"><span>Total realizado</span><strong id="totalEmpilhadores">0</strong><small>Movimentações</small></article>
+        <article class="kpi"><span>Meta atingida</span><strong id="hitEmpilhadores">0</strong><small>Empilhadores</small></article>
+        <article class="kpi"><span>Atualização</span><strong class="small-value" id="updatedEmpilhadores">--:--</strong><small>Tempo real</small></article>
+      </div>
+    </section>
+    <section class="ranking-card blue-card">
+      <div class="ranking-head">
+        <div><span class="eyebrow blue">CLASSIFICAÇÃO</span><h2>Empilhadores</h2></div>
+        <div class="live-pill blue-live"><span></span> AO VIVO</div>
+      </div>
+      <div class="ranking-list" id="rankingEmpilhadores"></div>
+    </section>
+    <footer class="slide-footer">
+      <div class="brand-circle blue-brand">selene</div><span>Produção dos Empilhadores</span>
+      <a class="infotech-signature" href="https://infotech-io.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Abrir site da InfoTech.io">
+          <span class="infotech-logo">InfoTech.io</span>
+          <small>Sistema desenvolvido pela InfoTech.io 🚀</small>
+        </a>
+      <div class="slide-progress blue-progress"><i class="progress-bar"></i></div>
+      <span class="slide-counter">3/4</span>
+    </footer>
+  </section>
+
+  <section class="tv-slide" id="slide-resumo" data-kind="fixed" data-key="resumo">
+    <header class="slide-top dark-header">
+      <div><span class="eyebrow">FECHAMENTO DO TURNO</span><h1>RESUMO DA PRODUÇÃO</h1></div>
+      <div class="date-box" id="dateResumo">--/--</div>
+    </header>
+    <div class="summary-stage">
+      <article class="winner-card green-winner">
+        <span>🏆 Melhor Armazenista</span><h2 id="bestArmName">—</h2><strong id="bestArmValue">0 Cxs</strong><small id="bestArmCompare">Sem comparação anterior</small>
+      </article>
+      <article class="winner-card blue-winner">
+        <span>🏆 Melhor Empilhador</span><h2 id="bestEmpName">—</h2><strong id="bestEmpValue">0 Mov.</strong><small id="bestEmpCompare">Sem comparação anterior</small>
+      </article>
+      <article class="summary-big">
+        <span>Produção total</span><strong id="summaryTotal">0</strong><small>Armazenistas + Empilhadores</small>
+      </article>
+      <article class="summary-big">
+        <span>Pessoas na meta</span><strong id="summaryHits">0</strong><small>Somando as duas equipes</small>
+      </article>
+    </div>
+    <div class="summary-message">Resultados atualizados automaticamente. Segurança, qualidade e produtividade caminham juntas.</div>
+    <footer class="slide-footer">
+      <div class="brand-circle">selene</div><span>Resumo do Turno</span>
+      <a class="infotech-signature" href="https://infotech-io.com.br/" target="_blank" rel="noopener noreferrer" aria-label="Abrir site da InfoTech.io">
+          <span class="infotech-logo">InfoTech.io</span>
+          <small>Sistema desenvolvido pela InfoTech.io 🚀</small>
+        </a>
+        <div class="slide-progress"><i class="progress-bar"></i></div>
+      <span class="slide-counter">4/4</span>
+    </footer>
+  </section>
+
+  <div id="extraSlidesHost"></div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+window.APP_CONFIG = window.APP_CONFIG || {
+  SUPABASE_URL: "https://yncspxfsvlqdnodlsosb.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_jALAHHuvrV5oxj2mugWTCQ_stD_vFyN",
+  REFRESH_SECONDS: 5
+};
+</script>
+<script src="js/config.js"></script>
+<script src="js/tv.js"></script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+PAINEL CD T3 - VERSÃO VISUAL / FINALIZAÇÃO
+===========================================
+
+PRINCIPAIS MUDANÇAS
+- Mantida apenas a conta de ADM do Supabase Authentication.
+- Não existe tela para criar outros usuários.
+- Produção continua separada em Armazenistas e Empilhadores.
+- Avisos agora podem ser criados em vários registros, ativados/desativados e receber imagem.
+- Nova tela "Resumo do Turno".
+- ADM pode criar Páginas Extras que entram automaticamente na apresentação da TV.
+- Imagens de produção com destaque visual nas telas de Armazenistas e Empilhadores.
+- Upload das imagens pelo próprio painel ADM usando Supabase Storage.
+- Porcentagem da meta ao lado da produção.
+- Cores: verde >= 100%; amarelo entre o limite configurado e 99%; vermelho abaixo.
+- Comparação de cada colaborador com o último dia disponível.
+- Novo Dia, Copiar Ontem, pesquisa de funcionário e Salvar Produção.
+- Tempo de troca configurável: 10 / 15 / 20 / 30 segundos.
+- Indicador X/Y e barra de progresso da apresentação.
+- Transições suaves entre as páginas.
+- Realtime + atualização de segurança.
+
+IMPORTANTE SOBRE O BANCO
+Você já executou uma versão anterior do schema.
+Para atualizar o banco, execute agora o arquivo:
+supabase/schema.sql
+
+Se alguma linha "alter publication supabase_realtime add table..." disser
+que a tabela já pertence à publication, ignore apenas essa linha.
+
+CONFIGURAÇÃO DO SITE
+Abra:
+js/config.js
+
+Preencha:
+SUPABASE_URL
+SUPABASE_ANON_KEY (Publishable key)
+
+NÃO coloque Secret Key / service_role no site.
+
+GITHUB PAGES
+Esta versão é totalmente compatível com GitHub Pages.
+index.html = TV
+admin.html = ADM
+
+IMAGENS
+No ADM:
+- Armazenistas > Imagem da produção
+- Empilhadores > Imagem dos empilhadores
+- Avisos > imagem opcional
+- Páginas extras > imagem opcional
+
+As imagens são enviadas para o bucket público "panel-media" do Supabase.
+
+FLUXO
+ADM altera -> Salva -> Supabase -> TV atualiza automaticamente.
+
+
+ATUALIZAÇÃO V2
+==============
+- Todas as telas da TV exibem a assinatura:
+  "Sistema desenvolvido pela InfoTech.io 🚀"
+- A assinatura é clicável e abre:
+  https://infotech-io.com.br/
+- Nova aba "Contas" no ADM.
+- O ADM pode criar novas contas de encarregados sem entrar no Supabase.
+- A criação usa Supabase Authentication por trás do site.
+
+OBSERVAÇÃO SOBRE NOVAS CONTAS
+Se o Supabase estiver configurado para exigir confirmação de e-mail,
+o novo encarregado precisará confirmar o e-mail antes do primeiro login.
+Se a confirmação estiver desativada, poderá entrar imediatamente.
+
+
+ATUALIZAÇÃO "100%"
+===================
+Foram adicionadas:
+- Indicador Online / Sem conexão na TV.
+- Horário da última sincronização.
+- Nome do turno visível na TV e editável no ADM.
+- Pausa da apresentação pelo ADM.
+- Escolha da tela que ficará fixa quando a apresentação estiver pausada.
+- Pré-visualização da TV pelo painel ADM.
+- Alerta antes de salvar valores muito acima do normal.
+- Limite do alerta configurável.
+- Opção de ocultar ou reativar funcionário do ranking sem apagá-lo.
+- A apresentação volta a rodar automaticamente ao desativar a pausa.
+
+ATENÇÃO
+Como existe uma nova policy para permitir ao ADM ocultar/reativar funcionários
+e novas configurações, execute novamente o arquivo:
+supabase/schema.sql
+
+Se aparecer mensagem dizendo que alguma tabela já está no supabase_realtime,
+ignore apenas a linha correspondente do ALTER PUBLICATION.
+
+
+CONFIGURAÇÃO JÁ PREENCHIDA
+==========================
+Project URL:
+https://yncspxfsvlqdnodlsosb.supabase.co
+
+A Publishable Key do frontend já foi adicionada ao js/config.js.
+
+Próximo teste:
+1. Execute o supabase/schema.sql MAIS RECENTE desta pasta no SQL Editor.
+2. Abra admin.html pelo GitHub Pages (recomendado).
+3. Entre com seu e-mail e senha do Supabase Authentication.
+4. Altere uma produção e clique em Salvar.
+5. Abra index.html em outro PC/aba e confira se atualiza automaticamente.
+
+IMPORTANTE:
+Nunca coloque Secret Key / service_role no frontend.
+
+
+AJUSTE DE RANKING / EQUIPE
+==========================
+- Ranking da TV agora se divide dinamicamente em duas colunas.
+- A quantidade é calculada automaticamente:
+  12 pessoas -> 6 + 6
+  10 pessoas -> 5 + 5
+  9 pessoas -> 5 + 4
+- Até 6 pessoas, usa apenas uma coluna.
+- Com mais pessoas, o tamanho das linhas é reduzido automaticamente para continuar cabendo.
+- ADM Armazenistas: adicionar/excluir armazenista dentro da própria aba.
+- ADM Empilhadores: adicionar/excluir empilhador dentro da própria aba.
+
+IMPORTANTE:
+Execute novamente supabase/schema.sql desta versão para liberar ao ADM
+a criação e exclusão de funcionários pelas regras RLS.
+
+
+ATUALIZAÇÃO - EMPILHADORES SEMANAL
+===================================
+- Armazenistas continuam com produção diária.
+- Empilhadores agora usam produção semanal.
+- No ADM dos empilhadores, a seleção é por semana.
+- O banco grava a segunda-feira da semana como referência interna.
+- Ao focar/clicar em qualquer campo de produção, o valor atual é selecionado.
+  Assim, ao digitar 99 sobre 0 ou 500, o número anterior é substituído.
+
+
+CORREÇÃO - AVISOS E EMPILHADORES
+================================
+- Botão "Excluir" agora aparece ao lado de "Editar" em cada aviso.
+- Ao excluir, o sistema pede confirmação.
+- O texto/caixa "Semana de 08/08" foi removido da tela dos empilhadores.
+- A produção dos empilhadores continua semanal internamente.
+
+Para liberar a exclusão no Supabase, execute apenas:
+supabase/liberar_exclusao_avisos.sql

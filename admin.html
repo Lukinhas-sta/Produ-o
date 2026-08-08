@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Administração • Painel CD T3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="admin-page">
+<main class="admin-shell">
+  <header class="admin-header">
+    <div><span class="eyebrow">PAINEL ADMINISTRATIVO</span><h1>CD T3 • Produção</h1></div>
+    <div class="header-actions">
+      <a class="btn btn-secondary" href="index.html" target="_blank">Pré-visualizar TV</a>
+      <button class="btn btn-danger hidden" id="logoutBtn">Sair</button>
+    </div>
+  </header>
+
+  <section class="login-panel" id="loginPanel">
+    <div><span class="eyebrow">ACESSO RESTRITO</span><h2>Entrar como administrador</h2><p>Esta versão foi preparada para uso com uma única conta de ADM.</p></div>
+    <form id="loginForm" class="login-form">
+      <label>E-mail<input type="email" id="email" required></label>
+      <label>Senha<input type="password" id="password" required></label>
+      <button class="btn btn-primary" type="submit">Entrar</button>
+      <p id="loginMessage" class="form-message"></p>
+    </form>
+  </section>
+
+  <section id="adminContent" class="hidden">
+    <nav class="admin-tabs">
+      <button class="admin-tab active" data-tab="avisos">Avisos</button>
+      <button class="admin-tab" data-tab="armazenistas">Armazenistas</button>
+      <button class="admin-tab" data-tab="empilhadores">Empilhadores</button>
+      <button class="admin-tab" data-tab="paginas">Páginas extras</button>
+      <button class="admin-tab" data-tab="contas">Contas</button>
+      <button class="admin-tab" data-tab="painel">Configurações</button>
+    </nav>
+
+    <section class="tab-panel" id="panel-avisos">
+      <div class="admin-card">
+        <div class="section-heading"><div><span class="eyebrow">TELA DE AVISOS</span><h2>Conteúdo que aparece na TV</h2></div><span class="save-status" id="noticeStatus">Pronto</span></div>
+        <div class="notice-form-grid">
+          <label>Tipo<select id="noticeTypeInput"><option>AVISO</option><option>ATENÇÃO</option><option>SEGURANÇA</option><option>INFORMAÇÃO</option><option>PARABÉNS</option></select></label>
+          <label>Título<input id="noticeTitleInput" maxlength="80"></label>
+          <label class="wide">Mensagem<textarea id="noticeMessageInput" rows="5" maxlength="350"></textarea></label>
+          <label>Assinatura<input id="noticeAuthorInput" maxlength="60"></label>
+          <label>Prioridade<input id="noticePriorityInput" type="number" min="1" max="99" value="10"></label>
+          <label class="check-label"><input id="noticeActiveInput" type="checkbox" checked> Aviso ativo</label>
+          <label class="wide">Imagem do aviso (opcional)<input id="noticeImageInput" type="file" accept="image/*"></label>
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-primary" id="saveNoticeBtn">Salvar aviso</button>
+          <button class="btn btn-secondary" id="newNoticeBtn">Novo aviso</button>
+        </div>
+        <div id="noticeList" class="simple-list"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel hidden" id="panel-armazenistas">
+      <div class="production-toolbar">
+        <label>Data<input type="date" id="dateArmazenistasInput"></label>
+        <label>Meta diária<input type="number" min="1" id="goalArmazenistasInput" value="150"></label>
+        <label>Buscar<input type="search" id="searchArmazenistas" placeholder="Nome..."></label>
+        <div class="toolbar-actions">
+          <button class="btn btn-secondary" data-newday="armazenistas">Novo dia</button>
+          <button class="btn btn-secondary" data-copy="armazenistas">Copiar ontem</button>
+          <button class="btn btn-secondary" data-load="armazenistas">Carregar</button>
+          <button class="btn btn-primary" data-save="armazenistas">Salvar produção</button>
+        </div>
+      </div>
+      <div class="image-upload-card">
+        <div><strong>Imagem da produção</strong><small>Essa imagem ganha destaque na TV.</small></div>
+        <input type="file" id="imageArmazenistas" accept="image/*">
+        <button class="btn btn-secondary" data-upload="armazenistas">Enviar imagem</button>
+      </div>
+
+      <div class="admin-card">
+        <div class="section-heading">
+          <div><span class="eyebrow">CADASTRO DA EQUIPE</span><h2>Armazenistas</h2></div>
+          <span class="save-status" id="teamStatusArmazenistas">Pronto</span>
+        </div>
+        <div class="team-manager">
+          <input id="newArmazenistaName" type="text" maxlength="100" placeholder="Nome do novo armazenista">
+          <button class="btn btn-primary" data-add-employee="armazenistas">Adicionar armazenista</button>
+        </div>
+        <div id="teamMembersArmazenistas" class="team-members"></div>
+      </div>
+
+      <div class="admin-card visibility-card">
+        <div class="section-heading">
+          <div><span class="eyebrow">EQUIPE</span><h2>Quem aparece no ranking</h2></div>
+        </div>
+        <div id="visibilityArmazenistas" class="visibility-list"></div>
+      </div>
+      <div class="admin-card">
+        <div class="section-heading"><div><span class="eyebrow">PRODUÇÃO</span><h2>Armazenistas</h2></div><span class="save-status" id="statusArmazenistas">Pronto</span></div>
+        <div class="employee-grid" id="gridArmazenistas"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel hidden" id="panel-empilhadores">
+      <div class="production-toolbar blue-toolbar">
+        <label>Semana de referência<input type="week" id="dateEmpilhadoresInput"></label>
+        <label>Meta semanal<input type="number" min="1" id="goalEmpilhadoresInput" value="150"></label>
+        <label>Buscar<input type="search" id="searchEmpilhadores" placeholder="Nome..."></label>
+        <div class="toolbar-actions">
+          <button class="btn btn-secondary" data-newday="empilhadores">Novo dia</button>
+          <button class="btn btn-secondary" data-copy="empilhadores">Copiar ontem</button>
+          <button class="btn btn-secondary" data-load="empilhadores">Carregar</button>
+          <button class="btn btn-blue" data-save="empilhadores">Salvar produção</button>
+        </div>
+      </div>
+      <div class="image-upload-card blue-upload">
+        <div><strong>Imagem dos empilhadores</strong><small>Use uma foto da operação para chamar atenção na TV.</small></div>
+        <input type="file" id="imageEmpilhadores" accept="image/*">
+        <button class="btn btn-secondary" data-upload="empilhadores">Enviar imagem</button>
+      </div>
+
+      <div class="admin-card blue-admin-card">
+        <div class="section-heading">
+          <div><span class="eyebrow blue">CADASTRO DA EQUIPE</span><h2>Empilhadores</h2></div>
+          <span class="save-status" id="teamStatusEmpilhadores">Pronto</span>
+        </div>
+        <div class="team-manager">
+          <input id="newEmpilhadorName" type="text" maxlength="100" placeholder="Nome do novo empilhador">
+          <button class="btn btn-blue" data-add-employee="empilhadores">Adicionar empilhador</button>
+        </div>
+        <div id="teamMembersEmpilhadores" class="team-members"></div>
+      </div>
+
+      <div class="admin-card visibility-card blue-admin-card">
+        <div class="section-heading">
+          <div><span class="eyebrow blue">EQUIPE</span><h2>Quem aparece no ranking</h2></div>
+        </div>
+        <div id="visibilityEmpilhadores" class="visibility-list"></div>
+      </div>
+      <div class="admin-card blue-admin-card">
+        <div class="section-heading"><div><span class="eyebrow blue">PRODUÇÃO</span><h2>Empilhadores</h2></div><span class="save-status" id="statusEmpilhadores">Pronto</span></div>
+        <div class="employee-grid" id="gridEmpilhadores"></div>
+      </div>
+    </section>
+
+    <section class="tab-panel hidden" id="panel-paginas">
+      <div class="admin-card">
+        <div class="section-heading"><div><span class="eyebrow">APRESENTAÇÃO</span><h2>Adicionar página extra</h2></div><span class="save-status" id="pageStatus">Pronto</span></div>
+        <div class="notice-form-grid">
+          <label>Título<input id="pageTitle" maxlength="90" placeholder="Ex.: Campanha de Segurança"></label>
+          <label>Subtítulo<input id="pageSubtitle" maxlength="100" placeholder="Ex.: Semana sem acidentes"></label>
+          <label class="wide">Conteúdo<textarea id="pageMessage" rows="5" maxlength="500"></textarea></label>
+          <label>Tema<select id="pageTheme"><option value="green">Verde</option><option value="blue">Azul</option><option value="orange">Laranja</option><option value="dark">Escuro</option></select></label>
+          <label class="check-label"><input id="pageActive" type="checkbox" checked> Exibir na TV</label>
+          <label class="wide">Imagem da página<input id="pageImage" type="file" accept="image/*"></label>
+        </div>
+        <div class="admin-actions"><button class="btn btn-primary" id="savePageBtn">Adicionar página</button></div>
+        <div id="pagesList" class="simple-list"></div>
+      </div>
+    </section>
+
+
+    <section class="tab-panel hidden" id="panel-contas">
+      <div class="admin-card">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">ACESSOS AO SISTEMA</span>
+            <h2>Criar conta para encarregado</h2>
+          </div>
+          <span class="save-status" id="accountStatus">Pronto</span>
+        </div>
+
+        <div class="account-info-box">
+          <strong>Como funciona</strong>
+          <p>Crie aqui as contas que poderão entrar no painel ADM. O usuário será criado no Supabase Authentication, mas você não precisará abrir o Supabase para fazer isso.</p>
+        </div>
+
+        <form id="accountForm" class="account-form">
+          <label>Nome do encarregado
+            <input id="accountName" type="text" maxlength="80" placeholder="Ex.: João Silva" required>
+          </label>
+
+          <label>E-mail de acesso
+            <input id="accountEmail" type="email" placeholder="encarregado@empresa.com" required>
+          </label>
+
+          <label>Senha inicial
+            <input id="accountPassword" type="password" minlength="6" placeholder="Mínimo 6 caracteres" required>
+          </label>
+
+          <label>Confirmar senha
+            <input id="accountPasswordConfirm" type="password" minlength="6" placeholder="Repita a senha" required>
+          </label>
+
+          <button class="btn btn-primary" type="submit">Criar nova conta</button>
+        </form>
+
+        <div class="account-note">
+          <strong>Importante:</strong> não use a mesma senha de e-mail pessoal. Crie uma senha própria para o painel.
+        </div>
+      </div>
+    </section>
+
+    <section class="tab-panel hidden" id="panel-painel">
+      <div class="admin-card">
+        <div class="section-heading"><div><span class="eyebrow">TELA DA TV</span><h2>Configurações da apresentação</h2></div><span class="save-status" id="panelStatus">Pronto</span></div>
+        <div class="settings-grid">
+          <label>Tempo de cada tela
+            <select id="slideSeconds"><option value="10">10 segundos</option><option value="15">15 segundos</option><option value="20">20 segundos</option><option value="30">30 segundos</option></select>
+          </label>
+          <label>Amarelo a partir de (% da meta)<input type="number" id="yellowThreshold" min="1" max="99" value="80"></label>
+          <label>Nome do turno
+            <input type="text" id="shiftName" maxlength="40" value="3º Turno" placeholder="Ex.: 3º Turno">
+          </label>
+          <label>Alerta para valor acima de
+            <input type="number" id="anomalyLimit" min="1" value="5000">
+          </label>
+          <label>Pausar apresentação
+            <select id="presentationPaused">
+              <option value="false">Não</option>
+              <option value="true">Sim</option>
+            </select>
+          </label>
+          <label>Tela fixa quando pausada
+            <select id="forcedSlide">
+              <option value="aviso">Avisos</option>
+              <option value="armazenistas">Armazenistas</option>
+              <option value="empilhadores">Empilhadores</option>
+              <option value="resumo">Resumo do Turno</option>
+            </select>
+          </label>
+        </div>
+        <button class="btn btn-primary" id="saveSettingsBtn">Salvar configurações</button>
+      </div>
+    </section>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+window.APP_CONFIG = window.APP_CONFIG || {
+  SUPABASE_URL: "https://yncspxfsvlqdnodlsosb.supabase.co",
+  SUPABASE_ANON_KEY: "sb_publishable_jALAHHuvrV5oxj2mugWTCQ_stD_vFyN",
+  REFRESH_SECONDS: 5
+};
+</script>
+<script src="js/config.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
