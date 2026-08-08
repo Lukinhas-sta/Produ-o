@@ -148,3 +148,24 @@ CORREÇÃO - AVISOS E EMPILHADORES
 
 Para liberar a exclusão no Supabase, execute apenas:
 supabase/liberar_exclusao_avisos.sql
+
+
+ATUALIZAÇÃO - TV / ADM
+======================
+- Botão "ADM" adicionado no canto superior direito da tela da TV.
+- O botão abre admin.html em outra aba.
+- Ajuste de layout para TVs 16:9 e monitores 1366x768 / Full HD.
+- Ranking não espalha mais poucas pessoas pela tela inteira.
+- Até 6 pessoas: uma coluna alinhada no topo.
+- 7 ou mais: duas colunas.
+- Textos, números e barras foram ajustados para maior legibilidade à distância.
+- Rodapé e cabeçalho ficaram mais compactos para aumentar a área útil.
+
+
+ATUALIZAÇÃO - ACESSO ADM POR ATALHO
+===================================
+- O botão ADM foi removido da tela da TV.
+- Para abrir a área administrativa, use:
+  Ctrl + Shift + A
+- O atalho apenas abre admin.html.
+- O login e a senha continuam obrigatórios.

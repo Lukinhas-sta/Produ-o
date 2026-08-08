@@ -412,3 +412,205 @@
     align-items:stretch;
   }
 }
+
+
+/* ============================================================
+   AJUSTE VISUAL PARA TV 16:9
+   ============================================================ */
+
+.tv-page{
+  overflow:hidden;
+}
+
+.tv-app{
+  width:min(1600px,98vw) !important;
+  height:100vh !important;
+  padding:1vh 0 !important;
+}
+
+.tv-slide{
+  inset:1vh 0 !important;
+}
+
+/* Cabeçalhos mais compactos e legíveis */
+.slide-top{
+  padding:12px 20px !important;
+  border-radius:15px !important;
+}
+.slide-top h1{
+  font-size:clamp(1.45rem,2.15vw,2.45rem) !important;
+  line-height:1.02 !important;
+}
+.eyebrow{
+  font-size:.67rem !important;
+}
+
+/* Status superior menos intrusivo */
+.tv-statusbar{
+  top:1.1vh !important;
+  width:min(1520px,95%) !important;
+}
+.connection-pill,.shift-pill,.paused-pill,#syncLabel{
+  font-size:.62rem !important;
+  padding:5px 8px !important;
+}
+
+/* Área de produção mais compacta */
+.production-hero{
+  margin:9px 0 !important;
+  gap:9px !important;
+  grid-template-columns:1fr 1.7fr !important;
+}
+.production-photo{
+  min-height:108px !important;
+  border-radius:14px !important;
+}
+.photo-overlay{
+  padding:14px !important;
+}
+.photo-overlay strong{
+  font-size:clamp(1.5rem,2.5vw,2.5rem) !important;
+}
+.kpi-stack{
+  gap:7px !important;
+}
+.kpi{
+  padding:9px 11px !important;
+  border-radius:12px !important;
+}
+.kpi span{font-size:.68rem !important}
+.kpi strong{
+  font-size:clamp(1.15rem,1.75vw,1.8rem) !important;
+  margin:2px 0 !important;
+}
+.kpi small{font-size:.64rem !important}
+.kpi strong.small-value{font-size:1.2rem !important}
+
+/* Ranking usa melhor o espaço e NÃO estica pessoas demais */
+.ranking-card{
+  padding:10px 13px !important;
+  border-radius:16px !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+}
+.ranking-head{
+  margin-bottom:6px !important;
+}
+.ranking-head h2{
+  font-size:1.08rem !important;
+}
+.ranking-list{
+  flex:1 !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  gap:8px 14px !important;
+}
+
+/* Colunas: linhas com altura real, sem "espalhar" 2 pessoas pela tela inteira */
+.ranking-column{
+  display:grid !important;
+  grid-template-rows:none !important;
+  grid-auto-rows:minmax(42px,50px) !important;
+  align-content:start !important;
+  gap:6px !important;
+  min-height:0 !important;
+}
+
+/* Até 6 pessoas: uma lista limpa no topo */
+.ranking-list.one-column{
+  max-width:none !important;
+  width:100% !important;
+}
+.ranking-list.one-column .ranking-column{
+  grid-auto-rows:minmax(48px,56px) !important;
+  max-width:980px !important;
+  width:100% !important;
+  margin:0 auto !important;
+}
+
+/* 7+ pessoas: duas colunas */
+.ranking-list:not(.one-column){
+  grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+}
+
+/* Linhas mais nítidas */
+.rank-row{
+  min-height:42px !important;
+  height:auto !important;
+  padding:4px 7px !important;
+  grid-template-columns:44px minmax(150px,.95fr) minmax(130px,1fr) 145px !important;
+  gap:7px !important;
+  border-radius:9px !important;
+}
+.rank-pos{
+  width:32px !important;
+  height:32px !important;
+  font-size:.8rem !important;
+}
+.person strong{
+  font-size:clamp(.82rem,1.02vw,.98rem) !important;
+  line-height:1.05 !important;
+}
+.person small{
+  font-size:.58rem !important;
+}
+.bar-track{
+  height:22px !important;
+}
+.qty{
+  font-size:clamp(.8rem,1vw,.98rem) !important;
+}
+.percent{
+  min-width:58px !important;
+  padding:4px 6px !important;
+  font-size:.72rem !important;
+}
+.amount-box{
+  gap:6px !important;
+}
+
+/* Rodapé mais fino para sobrar área útil */
+.slide-footer{
+  padding-top:5px !important;
+  gap:7px !important;
+  font-size:.66rem !important;
+}
+.brand-circle{
+  width:34px !important;
+  height:34px !important;
+  font-size:.65rem !important;
+}
+.infotech-signature{
+  padding:4px 7px !important;
+}
+.infotech-logo{
+  font-size:.74rem !important;
+}
+.infotech-signature small{
+  font-size:.58rem !important;
+}
+
+/* Em 1366x768 reduz só o necessário */
+@media (max-height:800px) and (min-width:1000px){
+  .tv-slide .slide-top{margin-top:22px !important}
+  .production-photo{min-height:96px !important}
+  .ranking-column{grid-auto-rows:minmax(38px,45px) !important}
+  .ranking-list.one-column .ranking-column{grid-auto-rows:minmax(44px,50px) !important}
+  .rank-row{min-height:38px !important}
+  .bar-track{height:20px !important}
+  .slide-footer{font-size:.62rem !important}
+}
+
+/* TV Full HD */
+@media (min-width:1600px) and (min-height:900px){
+  .rank-row{
+    grid-template-columns:50px minmax(190px,1fr) minmax(170px,1.2fr) 175px !important;
+  }
+  .person strong{font-size:1rem !important}
+  .qty{font-size:1rem !important}
+  .percent{font-size:.78rem !important;min-width:64px !important}
+}
+
+@media(max-width:900px){
+}

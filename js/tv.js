@@ -3,6 +3,22 @@
   const configured=Boolean(cfg.SUPABASE_URL && cfg.SUPABASE_URL.startsWith('https://') && cfg.SUPABASE_ANON_KEY && cfg.SUPABASE_ANON_KEY.startsWith('sb_publishable_'));
   const supa=configured?window.supabase.createClient(cfg.SUPABASE_URL,cfg.SUPABASE_ANON_KEY):null;
   const $=id=>document.getElementById(id);
+
+  // Atalho secreto para abrir a área administrativa:
+  // Ctrl + Shift + A
+  document.addEventListener('keydown', (event) => {
+    if (
+      event.ctrlKey &&
+      event.shiftKey &&
+      !event.altKey &&
+      event.key.toLowerCase() === 'a'
+    ) {
+      event.preventDefault();
+      window.open('admin.html', '_blank', 'noopener');
+    }
+  });
+
+
   const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   let slides=[],currentIndex=0,tick=0,slideSeconds=10,yellowThreshold=80,presentationPaused=false,forcedSlide='aviso',lastGoodSync=null;
   let latestData={armazenistas:null,empilhadores:null};
