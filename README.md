@@ -4,6 +4,10 @@
 
 Este repositório reúne um painel web criado para organizar e apresentar informações de produção de forma simples e visual. O projeto nasceu de uma necessidade prática e evoluiu para uma experiência pensada para acompanhamento em tela grande e consulta rápida.
 
+## 🌐 Projeto ao vivo
+
+**[Abrir o painel no GitHub Pages](https://lukinhas-sta.github.io/Produ-o/)**
+
 ## ✨ Proposta
 
 - Visualização de produção diária
