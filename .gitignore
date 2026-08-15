@@ -1,0 +1,22 @@
+# Ambiente e segredos
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Dependências e ferramentas
+node_modules/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Arquivos temporários e backups
+*.log
+*.tmp
+*.bak
+*.backup
+*.zip
